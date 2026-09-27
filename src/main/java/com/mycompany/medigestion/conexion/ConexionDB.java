@@ -34,7 +34,7 @@ public class ConexionDB {
     }
     
     public static void main (String[] args){
-        Connection conex = conexionDB.getConexion();
+        Connection conex = ConexionDB.getConexion();
         
         if(conex != null){
             System.out.println("Conexión establecida");
@@ -42,7 +42,7 @@ public class ConexionDB {
             try{
                 conex.close();
             }catch(SQLException e){
-                JOptionPane.showMessageDialog(null, "No se pudo cerra la conexión de la BASE DE DATOS", "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "No se pudo cerrar la conexión de la BASE DE DATOS", "ERROR", JOptionPane.ERROR_MESSAGE);
                 System.out.println("ERROR al cerrar la conexion con la DB: " + e.getMessage());
             }
         }else{
