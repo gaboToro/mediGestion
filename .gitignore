@@ -1,1 +1,5 @@
 nbactions.xml
+target/
+lib/
+*.class
+nbproject/private/
