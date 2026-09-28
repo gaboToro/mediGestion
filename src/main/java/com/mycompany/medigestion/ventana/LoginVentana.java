@@ -1,6 +1,7 @@
 package com.mycompany.medigestion.ventana;
 
 import com.mycompany.medigestion.conexion.ConexionDB;
+import com.mycompany.medigestion.util.UsuarioSesion;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.sql.Connection;
@@ -127,9 +128,13 @@ public class LoginVentana extends javax.swing.JFrame {
                 resultado = consulta.executeQuery();
                 
                 if(resultado.next()){
-                    JOptionPane.showMessageDialog(null, "LOGIN EXITOSO, BIENVENIDO " + username, "BIENVENIDO", JOptionPane.INFORMATION_MESSAGE);
-                    txt_user.setText("");
-                    txt_password.setText("");
+                    String full_name = resultado.getString("full_name");
+                    String rol = resultado.getString("rol");
+                    
+                    UsuarioSesion.iniciarSesion(full_name, rol);
+                    PrincipalVentana principal = new PrincipalVentana();
+                    principal.setVisible(true);
+                    this.dispose();
                 }else{
                     intentos++;
                     JOptionPane.showMessageDialog(null, "USUARIO Y/O CONTRASEÑA INCORRECTOS", "INTENTO "+ intentos, JOptionPane.ERROR_MESSAGE);
