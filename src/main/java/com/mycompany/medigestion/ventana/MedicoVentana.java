@@ -23,14 +23,13 @@ public class MedicoVentana extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MedicoVentana.class.getName());
  
     public MedicoVentana() {
-        /*
         if(!UsuarioSesion.isLogueado()){
             JOptionPane.showMessageDialog(null, "Acceso denegado. Por favor, inicie sesión", "Seguridad", JOptionPane.WARNING_MESSAGE);
             new LoginVentana().setVisible(true);
             this.dispose();
             return;
         }
-        */
+        
         
         initComponents();
         cargarTabla();
@@ -385,124 +384,84 @@ public class MedicoVentana extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_agregarActionPerformed
 
     private void btn_modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_modificarActionPerformed
-        /*if (idUsuarioSeleccionado == -1) {
-            JOptionPane.showMessageDialog(null, "POR FAVOR, BUSQUE UN USUARIO PRIMERO ANTES DE MODIFICARLO", "AVISO", JOptionPane.WARNING_MESSAGE);
+        //Validar que se haya buscado previamente
+        if (cedulaMedicoSeleccionada.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "POR FAVOR, BUSQUE UN MÉDICO ANTES DE MODIFICARLO.", "AVISO", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        //Recolectar datos
-        String username = txt_cedula.getText();
-        String fullname = txt_nombre.getText();
-        String passwordStr = new String(txt_password.getPassword());
+        String cedula = txt_cedula.getText();
+        String nombre = txt_nombre.getText();
+        String licencia = txt_licenciaMedica.getText();
+        String telefono = txt_telefono.getText();
+        String email = txt_email.getText();
 
-        if (username.isEmpty() || fullname.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(null, "DEBE LLENAR LOS CAMPOS 'USUARIO' Y 'NOMBRE'", "AVISO", JOptionPane.WARNING_MESSAGE);
+        if (cedula.isEmpty() || nombre.isEmpty() || licencia.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "LLENE TODOS LOS CAMPOS ANTES DE MODIFICAR", "AVISO", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        String passwordFinal;
-        if (passwordStr.isEmpty()) {
-            // Si dejó la caja vacía, le devolvemos el Hash viejo que guardamos en la memoria
-            passwordFinal = hashPasswordSeleccionado;
-        } else {
-            // encriptamos la nueva contraseña
-            passwordFinal = org.mindrot.jbcrypt.BCrypt.hashpw(passwordStr, org.mindrot.jbcrypt.BCrypt.gensalt());
-        }
+        //Extraer el ID de la especialidad del ComboBox
+        Especialidad espSeleccionada = (Especialidad) jc_especialidad.getSelectedItem();
+        int idEspecialidad = espSeleccionada.getIdEspecialidad();
 
-        //Convertir ComboBox a Enums
-        String textoRol = jc_especialidad.getSelectedItem().toString();
-        Rol rolEnum;
-        if (textoRol.equals("Administrador")) {
-            rolEnum = Rol.administrador;
-        } else if (textoRol.equals("Médico")) {
-            rolEnum = Rol.medico;
-        } else if (textoRol.equals("Farmaceútico")){
-            rolEnum = Rol.farmaceutico;
-        }else{
-            rolEnum = Rol.recepcionista;
-        }
+        //Empaquetar
+        Medico medEditado = new Medico();
+        //Usamos la cédula seleccionada originalmente por si el usuario intentó cambiarla en la caja de texto
+        medEditado.setIdMedico(cedulaMedicoSeleccionada);
+        medEditado.setFullName(nombre);
+        medEditado.setLicenciaMedica(licencia);
+        medEditado.setIdEspecialidad(idEspecialidad);
+        medEditado.setTelefono(telefono);
+        medEditado.setEmail(email);
 
-        String textoEstado = jc_estado.getSelectedItem().toString();
-        Estado estadoEnum = textoEstado.equals("Activo") ? Estado.activo : Estado.inactivo;
+        //Ejecutar la modificación
+        MedicoDAO dao = new MedicoDAO();
+        if (dao.modificar(medEditado)) {
+            JOptionPane.showMessageDialog(null, "MÉDICO MODIFICADO EXITOSAMENTE");
 
-        if (username.equals(getUsername())) {
-            if (estadoEnum == Estado.inactivo) {
-                JOptionPane.showMessageDialog(null, "NO PUEDE CAMBIAR SU PROPIA ESTADO A INACTIVO", "ACCIÓN DENEGADA", JOptionPane.WARNING_MESSAGE);
-                // Forzamos a que en la interfaz visual vuelva a decir "Activo"
-                jc_estado.setSelectedItem("Activo");
-                return;
-            }
-        }
-        
-        //Empaquetar todo en el Objeto Usuario
-        Usuario usrModificado = new Usuario();
-        usrModificado.setId_User(idUsuarioSeleccionado); // Le pasamos el ID que teníamos escondido
-        usrModificado.setUsername(username);
-        usrModificado.setPassword(passwordFinal);
-        usrModificado.setFullname(fullname);
-        usrModificado.setRol(rolEnum);
-        usrModificado.setEstado(estadoEnum);
-
-        //Enviar al DAO para actualizar la BD
-        UsuarioDAO dao = new UsuarioDAO();
-        if (dao.modificar(usrModificado)) {
-            javax.swing.JOptionPane.showMessageDialog(null, "USUARIO MODIFICADO EXITOSAMENTE");
-
+            cedulaMedicoSeleccionada = "";
             txt_cedula.setText("");
             txt_nombre.setText("");
-            txt_password.setText("");
+            txt_licenciaMedica.setText("");
+            txt_telefono.setText("");
+            txt_email.setText("");
             jc_especialidad.setSelectedIndex(0);
-            jc_estado.setSelectedIndex(0);
 
-            // Borramos la memoria para evitar errores
-            idUsuarioSeleccionado = -1;
-            hashPasswordSeleccionado = "";
-
-            // Actualizamos la tabla visual
-            cargarTabla();
+            cargarTabla(); 
         } else {
-            javax.swing.JOptionPane.showMessageDialog(null, "ERROR AL MODIFICAR AL USUARIO", "ERROR", JOptionPane.ERROR_MESSAGE);
-        }*/
+            JOptionPane.showMessageDialog(null, "ERROR AL MODIFICAR", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btn_modificarActionPerformed
 
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
-        /*if (idUsuarioSeleccionado == -1) {
-            JOptionPane.showMessageDialog(null, "POR FAVOR, BUSQUE UN USUARIO ANTES DE ELIMINARLO", "AVISO", JOptionPane.WARNING_MESSAGE);
+        if (cedulaMedicoSeleccionada.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "POR FAVOR, BUSQUE UN MÉDICO ANTES DE ELIMINARLO.", "AVISO", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Validar que no sea el mismo usuario que tiene la sesión abierta
-        String usernameAEliminar = txt_cedula.getText();
-        if (usernameAEliminar.equals(getUsername())) {
-            javax.swing.JOptionPane.showMessageDialog(null, "NO SE PUEDE ELIMINAR LA CUENTA MIENTRAS MANTIENE LA SESIÓN INICIADA", "ACCIÓN DENEGADA", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        String username = txt_cedula.getText();
-        int respuesta = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar permanentemente al usuario '" + username + "'?\nEsta acción no se puede deshacer.",
-                "CONFIRMAR ELIMINACIÓN", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        String nombre = txt_nombre.getText();
+        int respuesta = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar permanentemente al médico '" + nombre + "'?", "CONFIRMAR ELIMINACIÓN", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (respuesta == JOptionPane.YES_OPTION) {
-            UsuarioDAO dao = new UsuarioDAO();
+            MedicoDAO dao = new MedicoDAO();
 
-            if (dao.eliminar(idUsuarioSeleccionado)) {
-                JOptionPane.showMessageDialog(null, "USUARIO ELIMINADO EXITOSAMENTE");
+            if (dao.eliminar(cedulaMedicoSeleccionada)) {
+                JOptionPane.showMessageDialog(null, "MÉDICO ELIMINADO EXITOSAMENTE");
 
+                cedulaMedicoSeleccionada = "";
                 txt_cedula.setText("");
                 txt_nombre.setText("");
-                txt_password.setText("");
+                txt_licenciaMedica.setText("");
+                txt_telefono.setText("");
+                txt_email.setText("");
                 jc_especialidad.setSelectedIndex(0);
-                jc_estado.setSelectedIndex(0);
-
-                //Borramos la memoria temporal
-                idUsuarioSeleccionado = -1;
-                hashPasswordSeleccionado = ""; 
 
                 cargarTabla();
             } else {
-                JOptionPane.showMessageDialog(null, "ERROR AL ELIMINAR EL USUARIO", "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "NO SE PUEDO ELIMINAR EL MÉDICO.\n\nMotivo probable: El médico tiene registros vinculados (citas o pacientes).", "ACCIÓN DENEGADA", JOptionPane.ERROR_MESSAGE);
             }
-        }*/
+        }
     }//GEN-LAST:event_btn_eliminarActionPerformed
 
     private void btn_actualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_actualizarActionPerformed
@@ -527,7 +486,6 @@ public class MedicoVentana extends javax.swing.JFrame {
         MedicoDAO medDAO = new MedicoDAO();
         List<Medico> lista = medDAO.listar();
 
-        // 4. Llenamos la tabla fila por fila
         for (Medico med : lista) {
             Object[] fila = new Object[6];
             fila[0] = med.getIdMedico();         

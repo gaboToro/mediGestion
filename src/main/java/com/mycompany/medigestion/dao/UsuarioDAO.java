@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author gabri
  */
-public class UsuarioDAO implements CRUD<Usuario> {
+public class UsuarioDAO implements CRUD<Usuario, Integer> {
     
     @Override
     public boolean insertar(Usuario usr) {
@@ -64,7 +64,7 @@ public class UsuarioDAO implements CRUD<Usuario> {
     }
 
     @Override
-    public boolean eliminar(int id) {
+    public boolean eliminar(Integer id) {
         String sql = "DELETE FROM usuario WHERE id_user=?";
         
         try (Connection conexion = ConexionDB.getConexion();
