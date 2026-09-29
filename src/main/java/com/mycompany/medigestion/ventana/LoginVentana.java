@@ -1,14 +1,11 @@
 package com.mycompany.medigestion.ventana;
 
-import com.mycompany.medigestion.conexion.ConexionDB;
 import com.mycompany.medigestion.dao.UsuarioDAO;
+import com.mycompany.medigestion.modelo.Estado;
 import com.mycompany.medigestion.modelo.Usuario;
 import com.mycompany.medigestion.util.UsuarioSesion;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -134,11 +131,16 @@ public class LoginVentana extends javax.swing.JFrame {
             // 3. Verificamos que el usuario exista Y que la contraseña coincida con el Hash
             if (usrEncontrado != null && org.mindrot.jbcrypt.BCrypt.checkpw(pass, usrEncontrado.getPassword())) {
 
+                //Verificamos usuario activo/inactivo
+                if (usrEncontrado.getEstado() == Estado.inactivo) {
+                    JOptionPane.showMessageDialog(null, "USUARIO INACTIVO. Comuníquese con administración.", "ACCESO DENEGADO", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 // Login Exitoso
                 String full_name = usrEncontrado.getFullname();
                 String rol = usrEncontrado.getRol().name(); // Convertimos el Enum a String
 
-                UsuarioSesion.iniciarSesion(full_name, rol);
+                UsuarioSesion.iniciarSesion(username, full_name, rol);
                 PrincipalVentana principal = new PrincipalVentana();
                 principal.setVisible(true);
                 this.dispose();

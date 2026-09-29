@@ -5,6 +5,7 @@ import com.mycompany.medigestion.modelo.Estado;
 import com.mycompany.medigestion.modelo.Rol;
 import com.mycompany.medigestion.modelo.Usuario;
 import com.mycompany.medigestion.util.UsuarioSesion;
+import static com.mycompany.medigestion.util.UsuarioSesion.getUsername;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.List;
@@ -24,14 +25,14 @@ public class UsuarioVentana extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UsuarioVentana.class.getName());
  
     public UsuarioVentana() {
-        /*
+        
         if(!UsuarioSesion.isLogueado()){
             JOptionPane.showMessageDialog(null, "Acceso denegado. Por favor, inicie sesión", "Seguridad", JOptionPane.WARNING_MESSAGE);
             new LoginVentana().setVisible(true);
             this.dispose();
             return;
         }
-        */
+        
         initComponents();
         cargarTabla();
         
@@ -102,6 +103,7 @@ public class UsuarioVentana extends javax.swing.JFrame {
         btn_agregar = new javax.swing.JButton();
         btn_modificar = new javax.swing.JButton();
         btn_eliminar = new javax.swing.JButton();
+        btn_actualizar = new javax.swing.JButton();
         l_fondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -219,7 +221,15 @@ public class UsuarioVentana extends javax.swing.JFrame {
         btn_eliminar.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         btn_eliminar.setForeground(new java.awt.Color(0, 102, 153));
         btn_eliminar.setText("ELIMINAR");
+        btn_eliminar.addActionListener(this::btn_eliminarActionPerformed);
         jPanel1.add(btn_eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 410, 110, -1));
+
+        btn_actualizar.setBackground(new java.awt.Color(204, 204, 255));
+        btn_actualizar.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        btn_actualizar.setForeground(new java.awt.Color(0, 102, 153));
+        btn_actualizar.setText("ACTUALIZAR");
+        btn_actualizar.addActionListener(this::btn_actualizarActionPerformed);
+        jPanel1.add(btn_actualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 90, -1, -1));
         jPanel1.add(l_fondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 460));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -399,6 +409,15 @@ public class UsuarioVentana extends javax.swing.JFrame {
         String textoEstado = jc_estado.getSelectedItem().toString();
         Estado estadoEnum = textoEstado.equals("Activo") ? Estado.activo : Estado.inactivo;
 
+        if (username.equals(getUsername())) {
+            if (estadoEnum == Estado.inactivo) {
+                JOptionPane.showMessageDialog(null, "NO PUEDE CAMBIAR SU PROPIA ESTADO A INACTIVO", "ACCIÓN DENEGADA", JOptionPane.WARNING_MESSAGE);
+                // Forzamos a que en la interfaz visual vuelva a decir "Activo"
+                jc_estado.setSelectedItem("Activo");
+                return;
+            }
+        }
+        
         //Empaquetar todo en el Objeto Usuario
         Usuario usrModificado = new Usuario();
         usrModificado.setId_User(idUsuarioSeleccionado); // Le pasamos el ID que teníamos escondido
@@ -430,6 +449,50 @@ public class UsuarioVentana extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_modificarActionPerformed
 
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+        if (idUsuarioSeleccionado == -1) {
+            JOptionPane.showMessageDialog(null, "POR FAVOR, BUSQUE UN USUARIO ANTES DE ELIMINARLO", "AVISO", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Validar que no sea el mismo usuario que tiene la sesión abierta
+        String usernameAEliminar = txt_usuario.getText();
+        if (usernameAEliminar.equals(getUsername())) {
+            javax.swing.JOptionPane.showMessageDialog(null, "NO SE PUEDE ELIMINAR LA CUENTA MIENTRAS MANTIENE LA SESIÓN INICIADA", "ACCIÓN DENEGADA", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String username = txt_usuario.getText();
+        int respuesta = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar permanentemente al usuario '" + username + "'?\nEsta acción no se puede deshacer.",
+                "CONFIRMAR ELIMINACIÓN", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+        if (respuesta == JOptionPane.YES_OPTION) {
+            UsuarioDAO dao = new UsuarioDAO();
+
+            if (dao.eliminar(idUsuarioSeleccionado)) {
+                JOptionPane.showMessageDialog(null, "USUARIO ELIMINADO EXITOSAMENTE");
+
+                txt_usuario.setText("");
+                txt_nombre.setText("");
+                txt_password.setText("");
+                jc_rol.setSelectedIndex(0);
+                jc_estado.setSelectedIndex(0);
+
+                //Borramos la memoria temporal
+                idUsuarioSeleccionado = -1;
+                hashPasswordSeleccionado = ""; 
+
+                cargarTabla();
+            } else {
+                JOptionPane.showMessageDialog(null, "ERROR AL ELIMINAR EL USUARIO", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btn_eliminarActionPerformed
+
+    private void btn_actualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_actualizarActionPerformed
+         cargarTabla();
+    }//GEN-LAST:event_btn_actualizarActionPerformed
+
     private void cargarTabla() {
         // Obtenemos el modelo visual de tu tabla (Cambia 'tablaUsuarios' por el nombre real de tu variable JTable)
         DefaultTableModel modelo = (DefaultTableModel) tabla_usuarios.getModel();
@@ -458,6 +521,7 @@ public class UsuarioVentana extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_actualizar;
     private javax.swing.JButton btn_agregar;
     private javax.swing.JButton btn_buscar;
     private javax.swing.JButton btn_cerrarsesion;
