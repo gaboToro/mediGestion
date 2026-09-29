@@ -19,6 +19,8 @@ import javax.swing.table.DefaultTableModel;
  */
 public class UsuarioVentana extends javax.swing.JFrame {
     
+    private int idUsuarioSeleccionado = -1;
+    private String hashPasswordSeleccionado = "";
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UsuarioVentana.class.getName());
  
     public UsuarioVentana() {
@@ -210,6 +212,7 @@ public class UsuarioVentana extends javax.swing.JFrame {
         btn_modificar.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         btn_modificar.setForeground(new java.awt.Color(0, 102, 153));
         btn_modificar.setText("MODIFICAR");
+        btn_modificar.addActionListener(this::btn_modificarActionPerformed);
         jPanel1.add(btn_modificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 380, 110, -1));
 
         btn_eliminar.setBackground(new java.awt.Color(204, 204, 255));
@@ -250,7 +253,48 @@ public class UsuarioVentana extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_volverActionPerformed
 
     private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
-        // TODO add your handling code here:
+        String username = txt_usuario.getText();
+
+        if (username.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "INGRESE EL USUARIO QUE DESEA BUSCAR", "AVISO", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        UsuarioDAO dao = new UsuarioDAO();
+        Usuario usrEncontrado = dao.buscarPorUsername(username);
+
+        if (usrEncontrado != null) {
+            //Se guarda la contraseña de forma invisible para usarla luego en "Modificar" o "Eliminar"
+            hashPasswordSeleccionado = usrEncontrado.getPassword();
+            //Se guarda el ID de forma invisible para usarlo luego en "Modificar" o "Eliminar"
+            idUsuarioSeleccionado = usrEncontrado.getId_User();
+
+            txt_nombre.setText(usrEncontrado.getFullname());
+            txt_password.setText("");
+
+            //Seleccionamos el valor correcto en el ComboBox de Rol
+            if (usrEncontrado.getRol() == Rol.administrador) {
+                jc_rol.setSelectedItem("Administrador");
+            } else if (usrEncontrado.getRol() == Rol.medico) {
+                jc_rol.setSelectedItem("Médico");
+            } else if (usrEncontrado.getRol() == Rol.farmaceutico){
+                jc_rol.setSelectedItem("Farmaceútico");
+            }else{
+                jc_rol.setSelectedItem("Recepcionista"); // O el texto exacto que tengas en tu diseño
+            }
+
+            //Seleccionamos el valor correcto en el ComboBox de Estado
+            if (usrEncontrado.getEstado() == Estado.activo) {
+                jc_estado.setSelectedItem("Activo");
+            } else {
+                jc_estado.setSelectedItem("Inactivo");
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(this, "EL USUARIO '" + username + "' NO EXISTE EN EL SISTEMA.", "NO ENCONTRADO", JOptionPane.INFORMATION_MESSAGE);
+            // Reseteamos el ID porque no encontramos a nadie
+            idUsuarioSeleccionado = -1;
+        }
     }//GEN-LAST:event_btn_buscarActionPerformed
 
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
@@ -292,6 +336,10 @@ public class UsuarioVentana extends javax.swing.JFrame {
         
         //Entregar al objeto DAO para que lo guarde
         UsuarioDAO dao = new UsuarioDAO();
+        if(dao.buscarPorUsername(username) != null){
+            JOptionPane.showMessageDialog(this, "EL USUARIO: '" + username + "' YA ESTÁ EN USO. POR FAVOR, ELIJA OTRO", "USUARIO DUPLICADO", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if(dao.insertar(nuevoUser)){
             JOptionPane.showMessageDialog(null, "USUARIO AGREGADO EXITOSAMENTE");
             
@@ -310,6 +358,78 @@ public class UsuarioVentana extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btn_agregarActionPerformed
 
+    private void btn_modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_modificarActionPerformed
+        if (idUsuarioSeleccionado == -1) {
+            JOptionPane.showMessageDialog(null, "POR FAVOR, BUSQUE UN USUARIO PRIMERO ANTES DE MODIFICARLO", "AVISO", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        //Recolectar datos
+        String username = txt_usuario.getText();
+        String fullname = txt_nombre.getText();
+        String passwordStr = new String(txt_password.getPassword());
+
+        if (username.isEmpty() || fullname.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(null, "DEBE LLENAR LOS CAMPOS 'USUARIO' Y 'NOMBRE'", "AVISO", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String passwordFinal;
+        if (passwordStr.isEmpty()) {
+            // Si dejó la caja vacía, le devolvemos el Hash viejo que guardamos en la memoria
+            passwordFinal = hashPasswordSeleccionado;
+        } else {
+            // encriptamos la nueva contraseña
+            passwordFinal = org.mindrot.jbcrypt.BCrypt.hashpw(passwordStr, org.mindrot.jbcrypt.BCrypt.gensalt());
+        }
+
+        //Convertir ComboBox a Enums
+        String textoRol = jc_rol.getSelectedItem().toString();
+        Rol rolEnum;
+        if (textoRol.equals("Administrador")) {
+            rolEnum = Rol.administrador;
+        } else if (textoRol.equals("Médico")) {
+            rolEnum = Rol.medico;
+        } else if (textoRol.equals("Farmaceútico")){
+            rolEnum = Rol.farmaceutico;
+        }else{
+            rolEnum = Rol.recepcionista;
+        }
+
+        String textoEstado = jc_estado.getSelectedItem().toString();
+        Estado estadoEnum = textoEstado.equals("Activo") ? Estado.activo : Estado.inactivo;
+
+        //Empaquetar todo en el Objeto Usuario
+        Usuario usrModificado = new Usuario();
+        usrModificado.setId_User(idUsuarioSeleccionado); // Le pasamos el ID que teníamos escondido
+        usrModificado.setUsername(username);
+        usrModificado.setPassword(passwordFinal);
+        usrModificado.setFullname(fullname);
+        usrModificado.setRol(rolEnum);
+        usrModificado.setEstado(estadoEnum);
+
+        //Enviar al DAO para actualizar la BD
+        UsuarioDAO dao = new UsuarioDAO();
+        if (dao.modificar(usrModificado)) {
+            javax.swing.JOptionPane.showMessageDialog(null, "USUARIO MODIFICADO EXITOSAMENTE");
+
+            txt_usuario.setText("");
+            txt_nombre.setText("");
+            txt_password.setText("");
+            jc_rol.setSelectedIndex(0);
+            jc_estado.setSelectedIndex(0);
+
+            // Borramos la memoria para evitar errores
+            idUsuarioSeleccionado = -1;
+            hashPasswordSeleccionado = "";
+
+            // Actualizamos la tabla visual
+            cargarTabla();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(null, "ERROR AL MODIFICAR AL USUARIO", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btn_modificarActionPerformed
+
     private void cargarTabla() {
         // Obtenemos el modelo visual de tu tabla (Cambia 'tablaUsuarios' por el nombre real de tu variable JTable)
         DefaultTableModel modelo = (DefaultTableModel) tabla_usuarios.getModel();
@@ -325,14 +445,14 @@ public class UsuarioVentana extends javax.swing.JFrame {
             fila[0] = u.getUsername();
             fila[1] = u.getPassword();
             fila[2] = u.getFullname();
-            fila[3] = u.getRol().name(); 
+            fila[3] = u.getRol().name();
             fila[4] = u.getEstado().name();
 
             // Agregamos la fila terminada al modelo visual
             modelo.addRow(fila);
         }
     }
-    
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> new UsuarioVentana().setVisible(true));
     }
