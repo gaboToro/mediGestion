@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class UsuarioVentana extends javax.swing.JFrame {
     
+    private int idUsuarioSeleccionado = -1;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UsuarioVentana.class.getName());
  
     public UsuarioVentana() {
@@ -250,7 +251,46 @@ public class UsuarioVentana extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_volverActionPerformed
 
     private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
-        // TODO add your handling code here:
+        String username = txt_usuario.getText();
+
+        if (username.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "INGRESE EL USUARIO QUE DESEA BUSCAR", "AVISO", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        UsuarioDAO dao = new UsuarioDAO();
+        Usuario usrEncontrado = dao.buscarPorUsername(username);
+
+        if (usrEncontrado != null) {
+            //Se guarda el ID de forma invisible para usarlo luego en "Modificar" o "Eliminar"
+            idUsuarioSeleccionado = usrEncontrado.getId_User();
+
+            txt_nombre.setText(usrEncontrado.getFullname());
+            txt_password.setText("");
+
+            //Seleccionamos el valor correcto en el ComboBox de Rol
+            if (usrEncontrado.getRol() == Rol.administrador) {
+                jc_rol.setSelectedItem("Administrador");
+            } else if (usrEncontrado.getRol() == Rol.medico) {
+                jc_rol.setSelectedItem("Médico");
+            } else if (usrEncontrado.getRol() == Rol.farmaceutico){
+                jc_rol.setSelectedItem("Farmaceútico");
+            }else{
+                jc_rol.setSelectedItem("Recepcionista"); // O el texto exacto que tengas en tu diseño
+            }
+
+            //Seleccionamos el valor correcto en el ComboBox de Estado
+            if (usrEncontrado.getEstado() == Estado.activo) {
+                jc_estado.setSelectedItem("Activo");
+            } else {
+                jc_estado.setSelectedItem("Inactivo");
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(this, "EL USUARIO '" + username + "' NO EXISTE EN EL SISTEMA.", "NO ENCONTRADO", JOptionPane.INFORMATION_MESSAGE);
+            // Reseteamos el ID porque no encontramos a nadie
+            idUsuarioSeleccionado = -1;
+        }
     }//GEN-LAST:event_btn_buscarActionPerformed
 
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
@@ -292,6 +332,10 @@ public class UsuarioVentana extends javax.swing.JFrame {
         
         //Entregar al objeto DAO para que lo guarde
         UsuarioDAO dao = new UsuarioDAO();
+        if(dao.buscarPorUsername(username) != null){
+            JOptionPane.showMessageDialog(this, "EL USUARIO: '" + username + "' YA ESTÁ EN USO. POR FAVOR, ELIJA OTRO", "USUARIO DUPLICADO", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if(dao.insertar(nuevoUser)){
             JOptionPane.showMessageDialog(null, "USUARIO AGREGADO EXITOSAMENTE");
             

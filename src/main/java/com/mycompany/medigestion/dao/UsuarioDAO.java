@@ -76,4 +76,32 @@ public class UsuarioDAO implements CRUD<Usuario> {
         }
         return lista;
     }
+    
+    public Usuario buscarPorUsername(String username) {
+        String sql = "SELECT * FROM usuario WHERE username = ?";
+        Usuario usr = null;
+        
+        try (Connection conexion = ConexionDB.getConexion();
+             PreparedStatement consulta = conexion.prepareStatement(sql)) {
+            
+            consulta.setString(1, username);
+            
+            // Ejecutamos la consulta y metemos el ResultSet en el try
+            try (ResultSet resultado = consulta.executeQuery()) {
+                if (resultado.next()) {
+                    usr = new Usuario();
+                    usr.setId_User(resultado.getInt("id_user"));
+                    usr.setUsername(resultado.getString("username"));
+                    usr.setPassword(resultado.getString("password"));
+                    usr.setFullname(resultado.getString("full_name"));
+                    usr.setRol(Rol.valueOf(resultado.getString("rol")));
+                    usr.setEstado(Estado.valueOf(resultado.getString("state")));
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR al buscar usuario: " + e.getMessage());
+        }
+        
+        return usr;
+    }
 }
