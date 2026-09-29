@@ -170,6 +170,7 @@ public class PrincipalVentana extends javax.swing.JFrame {
         btn_medicos.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         btn_medicos.setForeground(new java.awt.Color(0, 102, 153));
         btn_medicos.setText("MÉDICOS");
+        btn_medicos.addActionListener(this::btn_medicosActionPerformed);
         jPanel1.add(btn_medicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 260, -1, -1));
 
         btn_stock.setBackground(new java.awt.Color(204, 204, 255));
@@ -281,6 +282,11 @@ public class PrincipalVentana extends javax.swing.JFrame {
         new UsuarioVentana().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btn_usuarioActionPerformed
+
+    private void btn_medicosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_medicosActionPerformed
+        new MedicoVentana().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btn_medicosActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> new PrincipalVentana().setVisible(true));

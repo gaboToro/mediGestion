@@ -10,14 +10,13 @@ import java.util.List;
 /**
  * @author gabri
  */
-public class MedicoDAO implements CRUD<Medico> {
+public class MedicoDAO implements CRUD<Medico, String> {
 
     @Override
     public boolean insertar(Medico med) {
         String sql = "INSERT INTO medico (id_medico, full_name, licencia_medica, id_especialidad, telefono, email) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conexion = ConexionDB.getConexion(); 
-                PreparedStatement consulta = conexion.prepareStatement(sql)) {
+        try (Connection conexion = ConexionDB.getConexion(); PreparedStatement consulta = conexion.prepareStatement(sql)) {
 
             consulta.setString(1, med.getIdMedico()); // La cédula
             consulta.setString(2, med.getFullName());
@@ -36,13 +35,43 @@ public class MedicoDAO implements CRUD<Medico> {
     }
 
     @Override
-    public boolean modificar(Medico objeto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean modificar(Medico med) {
+        String sql = "UPDATE medico SET full_name=?, licencia_medica=?, id_especialidad=?, telefono=?, email=? WHERE id_medico=?";
+
+        try (Connection conexion = ConexionDB.getConexion(); 
+                PreparedStatement consulta = conexion.prepareStatement(sql)) {
+
+            consulta.setString(1, med.getFullName());
+            consulta.setString(2, med.getLicenciaMedica());
+            consulta.setInt(3, med.getIdEspecialidad());
+            consulta.setString(4, med.getTelefono());
+            consulta.setString(5, med.getEmail());
+            consulta.setString(6, med.getIdMedico()); 
+
+            consulta.execute();
+            return true;
+
+        } catch (Exception e) {
+            System.out.println("ERROR al modificar médico: " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
-    public boolean eliminar(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean eliminar(String id_cedula) {
+        String sql = "DELETE FROM medico WHERE id_medico=?";
+
+        try (Connection conexion = ConexionDB.getConexion(); 
+                PreparedStatement consulta = conexion.prepareStatement(sql)) {
+
+            consulta.setString(1, id_cedula);
+            consulta.execute();
+            return true;
+
+        } catch (Exception e) {
+            System.out.println("ERROR al eliminar médico: " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
