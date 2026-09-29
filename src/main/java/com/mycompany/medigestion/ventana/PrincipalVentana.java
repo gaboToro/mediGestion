@@ -154,36 +154,65 @@ public class PrincipalVentana extends javax.swing.JFrame {
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        btn_pacientes.setBackground(new java.awt.Color(204, 204, 255));
+        btn_pacientes.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        btn_pacientes.setForeground(new java.awt.Color(0, 102, 153));
         btn_pacientes.setText("PACIENTES");
         jPanel1.add(btn_pacientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 180, -1, -1));
 
+        btn_citasmed.setBackground(new java.awt.Color(204, 204, 255));
+        btn_citasmed.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        btn_citasmed.setForeground(new java.awt.Color(0, 102, 153));
         btn_citasmed.setText("CITAS MÉDICAS");
         jPanel1.add(btn_citasmed, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 180, -1, -1));
 
+        btn_medicos.setBackground(new java.awt.Color(204, 204, 255));
+        btn_medicos.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        btn_medicos.setForeground(new java.awt.Color(0, 102, 153));
         btn_medicos.setText("MÉDICOS");
         jPanel1.add(btn_medicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 260, -1, -1));
 
+        btn_stock.setBackground(new java.awt.Color(204, 204, 255));
+        btn_stock.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        btn_stock.setForeground(new java.awt.Color(0, 102, 153));
         btn_stock.setText("STOCK MEDICAMENTOS");
         jPanel1.add(btn_stock, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 180, -1, -1));
 
+        btn_facturacion.setBackground(new java.awt.Color(204, 204, 255));
+        btn_facturacion.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        btn_facturacion.setForeground(new java.awt.Color(0, 102, 153));
         btn_facturacion.setText("FACTURACIÓN");
         jPanel1.add(btn_facturacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 260, -1, -1));
 
+        btn_usuario.setBackground(new java.awt.Color(204, 204, 255));
+        btn_usuario.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        btn_usuario.setForeground(new java.awt.Color(0, 102, 153));
         btn_usuario.setText("USUARIOS");
+        btn_usuario.addActionListener(this::btn_usuarioActionPerformed);
         jPanel1.add(btn_usuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 260, -1, -1));
 
+        btn_cerrarsesion.setBackground(new java.awt.Color(204, 204, 255));
+        btn_cerrarsesion.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        btn_cerrarsesion.setForeground(new java.awt.Color(0, 102, 153));
         btn_cerrarsesion.setText("CERRAR SESIÓN");
         btn_cerrarsesion.addActionListener(this::btn_cerrarsesionActionPerformed);
         jPanel1.add(btn_cerrarsesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 370, -1, -1));
 
+        btn_salir.setBackground(new java.awt.Color(204, 204, 255));
+        btn_salir.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        btn_salir.setForeground(new java.awt.Color(0, 102, 153));
         btn_salir.setText("SALIR");
         btn_salir.addActionListener(this::btn_salirActionPerformed);
         jPanel1.add(btn_salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 370, -1, -1));
 
+        btn_email.setBackground(new java.awt.Color(204, 204, 255));
+        btn_email.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        btn_email.setForeground(new java.awt.Color(0, 102, 153));
         btn_email.setText("E-MAIL");
         jPanel1.add(btn_email, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 50, -1, -1));
         jPanel1.add(l_logo, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, 140, 80));
 
+        l_bienvenido.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         l_bienvenido.setText("Bienvenido/a ");
         jPanel1.add(l_bienvenido, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 50, -1, -1));
         jPanel1.add(l_fondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(-10, 0, 840, 440));
@@ -247,6 +276,11 @@ public class PrincipalVentana extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_btn_cerrarsesionActionPerformed
+
+    private void btn_usuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_usuarioActionPerformed
+        new UsuarioVentana().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btn_usuarioActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> new PrincipalVentana().setVisible(true));
