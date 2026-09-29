@@ -19,8 +19,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class MedicoVentana extends javax.swing.JFrame {
     
-    private int idUsuarioSeleccionado = -1;
-    private String hashPasswordSeleccionado = "";
+    private String cedulaMedicoSeleccionada = "";
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MedicoVentana.class.getName());
  
     public MedicoVentana() {
@@ -305,48 +304,41 @@ public class MedicoVentana extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_volverActionPerformed
 
     private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
-        /*String username = txt_cedula.getText();
+        String cedula = txt_cedula.getText();
 
-        if (username.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "INGRESE EL USUARIO QUE DESEA BUSCAR", "AVISO", JOptionPane.WARNING_MESSAGE);
+        if (cedula.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "INGRESE LA CÉDULA PARA BUSCAR.", "AVISO", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        UsuarioDAO dao = new UsuarioDAO();
-        Usuario usrEncontrado = dao.buscarPorUsername(username);
+        MedicoDAO dao = new MedicoDAO();
+        Medico med = dao.buscar(cedula);
 
-        if (usrEncontrado != null) {
-            //Se guarda la contraseña de forma invisible para usarla luego en "Modificar" o "Eliminar"
-            hashPasswordSeleccionado = usrEncontrado.getPassword();
-            //Se guarda el ID de forma invisible para usarlo luego en "Modificar" o "Eliminar"
-            idUsuarioSeleccionado = usrEncontrado.getId_User();
+        if (med != null) {
+            txt_nombre.setText(med.getFullName());
+            txt_licenciaMedica.setText(med.getLicenciaMedica());
+            txt_telefono.setText(med.getTelefono());
+            txt_email.setText(med.getEmail());
 
-            txt_nombre.setText(usrEncontrado.getFullname());
-            txt_password.setText("");
+            //Buscamos qué especialidad coincide con la del médico
+            for (int i = 0; i < jc_especialidad.getItemCount(); i++) {
+                Especialidad esp = (Especialidad) jc_especialidad.getItemAt(i);
 
-            //Seleccionamos el valor correcto en el ComboBox de Rol
-            if (usrEncontrado.getRol() == Rol.administrador) {
-                jc_especialidad.setSelectedItem("Administrador");
-            } else if (usrEncontrado.getRol() == Rol.medico) {
-                jc_especialidad.setSelectedItem("Médico");
-            } else if (usrEncontrado.getRol() == Rol.farmaceutico){
-                jc_especialidad.setSelectedItem("Farmaceútico");
-            }else{
-                jc_especialidad.setSelectedItem("Recepcionista"); // O el texto exacto que tengas en tu diseño
+                if (esp.getIdEspecialidad() == med.getIdEspecialidad()) {
+                    jc_especialidad.setSelectedIndex(i);
+                    break;
+                }
             }
 
-            //Seleccionamos el valor correcto en el ComboBox de Estado
-            if (usrEncontrado.getEstado() == Estado.activo) {
-                jc_estado.setSelectedItem("Activo");
-            } else {
-                jc_estado.setSelectedItem("Inactivo");
-            }
+            //Guardamos la cédula en memoria para los botones Modificar/Eliminar
+            cedulaMedicoSeleccionada = med.getIdMedico();
 
         } else {
-            JOptionPane.showMessageDialog(this, "EL USUARIO '" + username + "' NO EXISTE EN EL SISTEMA.", "NO ENCONTRADO", JOptionPane.INFORMATION_MESSAGE);
-            // Reseteamos el ID porque no encontramos a nadie
-            idUsuarioSeleccionado = -1;
-        }*/
+            JOptionPane.showMessageDialog(null, "NO SE ENCONTRO NINGÚN MÉDICO CON LA CÉDULA INGRESADA", "NO ENCONTRADO", JOptionPane.INFORMATION_MESSAGE);
+
+            // Limpiamos la memoria por seguridad
+            cedulaMedicoSeleccionada = "";
+        }
     }//GEN-LAST:event_btn_buscarActionPerformed
 
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
