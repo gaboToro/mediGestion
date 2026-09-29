@@ -1,6 +1,8 @@
 package com.mycompany.medigestion.ventana;
 
 import com.mycompany.medigestion.conexion.ConexionDB;
+import com.mycompany.medigestion.dao.UsuarioDAO;
+import com.mycompany.medigestion.modelo.Usuario;
 import com.mycompany.medigestion.util.UsuarioSesion;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -115,45 +117,47 @@ public class LoginVentana extends javax.swing.JFrame {
 
     int intentos = 0;
     private void btn_ingresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ingresarActionPerformed
-        Connection conexion = ConexionDB.getConexion();
         String username = txt_user.getText();
         String pass = new String(txt_password.getPassword());
-        PreparedStatement consulta;
-        ResultSet resultado;
-          
-        try{
-            if(username.equals("") || pass.equals("")){
-                JOptionPane.showMessageDialog(null, "DEBE LLENAR TODOS LOS CAMPOS PARA CONTINUAR", "INFORMACIÓN", JOptionPane.WARNING_MESSAGE);
-            }else{
-                String sql = "SELECT * FROM usuario WHERE username=? and password=?";
-                consulta = conexion.prepareStatement(sql);
-                consulta.setString(1, username);
-                consulta.setString(2, pass);
-                resultado = consulta.executeQuery();
-                
-                if(resultado.next()){
-                    String full_name = resultado.getString("full_name");
-                    String rol = resultado.getString("rol");
-                    
-                    UsuarioSesion.iniciarSesion(full_name, rol);
-                    PrincipalVentana principal = new PrincipalVentana();
-                    principal.setVisible(true);
-                    this.dispose();
-                }else{
-                    intentos++;
-                    JOptionPane.showMessageDialog(null, "USUARIO Y/O CONTRASEÑA INCORRECTOS", "INTENTO "+ intentos, JOptionPane.ERROR_MESSAGE);
-                    txt_user.setText("");
-                    txt_password.setText("");
-                    
-                    if(intentos == 3){
-                        JOptionPane.showMessageDialog(null, "USUARIO BLOQUEADO POR DEMASIADOS INTENTOS, COMUNIQUESE CON SOPORTE", "BLOQUEO DE USUARIO",JOptionPane.ERROR_MESSAGE);
-                        System.exit(0);
-                    }
+
+        // 1. Validación de campos vacíos
+        if (username.equals("") || pass.equals("")) {
+            JOptionPane.showMessageDialog(null, "DEBE LLENAR TODOS LOS CAMPOS PARA CONTINUAR", "INFORMACIÓN", JOptionPane.WARNING_MESSAGE);
+            return; // Retornamos para detener la ejecución aquí mismo
+        }
+
+        try {
+            // 2. Llamamos al DAO para buscar al usuario
+            UsuarioDAO dao = new UsuarioDAO();
+            Usuario usrEncontrado = dao.buscarPorUsername(username);
+
+            // 3. Verificamos que el usuario exista Y que la contraseña coincida con el Hash
+            if (usrEncontrado != null && org.mindrot.jbcrypt.BCrypt.checkpw(pass, usrEncontrado.getPassword())) {
+
+                // Login Exitoso
+                String full_name = usrEncontrado.getFullname();
+                String rol = usrEncontrado.getRol().name(); // Convertimos el Enum a String
+
+                UsuarioSesion.iniciarSesion(full_name, rol);
+                PrincipalVentana principal = new PrincipalVentana();
+                principal.setVisible(true);
+                this.dispose();
+
+            } else {
+                // Login Fallido (No existe el usuario o la clave está mal)
+                intentos++;
+                JOptionPane.showMessageDialog(null, "USUARIO Y/O CONTRASEÑA INCORRECTOS", "INTENTO " + intentos, JOptionPane.ERROR_MESSAGE);
+                txt_user.setText("");
+                txt_password.setText("");
+
+                if (intentos == 3) {
+                    JOptionPane.showMessageDialog(null, "USUARIO BLOQUEADO POR DEMASIADOS INTENTOS, COMUNIQUESE CON SOPORTE", "BLOQUEO DE USUARIO", JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
                 }
             }
-         
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null, "ERROR: " + e, "ERROR", JOptionPane.ERROR_MESSAGE);   
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "ERROR: " + e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btn_ingresarActionPerformed
 
