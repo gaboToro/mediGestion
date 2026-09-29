@@ -77,7 +77,11 @@ public class LoginVentana extends javax.swing.JFrame {
         l_password.setForeground(new java.awt.Color(0, 102, 153));
         l_password.setText("Password:");
         panel.add(l_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 310, -1, -1));
+
+        txt_user.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         panel.add(txt_user, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 270, 250, -1));
+
+        txt_password.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         panel.add(txt_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 330, 250, -1));
 
         btn_ingresar.setBackground(new java.awt.Color(204, 204, 255));
@@ -119,7 +123,7 @@ public class LoginVentana extends javax.swing.JFrame {
           
         try{
             if(username.equals("") || pass.equals("")){
-                JOptionPane.showMessageDialog(null, "DEBE LLENAR TODOS LOS CAMPOS PARA CONTINUAR", "INFORMACION", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "DEBE LLENAR TODOS LOS CAMPOS PARA CONTINUAR", "INFORMACIÓN", JOptionPane.WARNING_MESSAGE);
             }else{
                 String sql = "SELECT * FROM usuario WHERE username=? and password=?";
                 consulta = conexion.prepareStatement(sql);
