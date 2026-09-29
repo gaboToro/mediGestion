@@ -65,7 +65,19 @@ public class UsuarioDAO implements CRUD<Usuario> {
 
     @Override
     public boolean eliminar(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "DELETE FROM usuario WHERE id_user=?";
+        
+        try (Connection conexion = ConexionDB.getConexion();
+             PreparedStatement consulta = conexion.prepareStatement(sql)) {
+             
+            consulta.setInt(1, id);
+            consulta.execute();
+            return true;
+            
+        } catch (Exception e) {
+            System.out.println("ERROR al eliminar usuario: " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
