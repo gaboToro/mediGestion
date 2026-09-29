@@ -79,4 +79,29 @@ public class MedicoDAO implements CRUD<Medico> {
         return lista;
     }
     
+    public Medico buscar(String cedula) {
+        Medico med = null;
+        String sql = "SELECT * FROM medico WHERE id_medico = ?";
+        
+        try (Connection conexion = ConexionDB.getConexion();
+             PreparedStatement consulta = conexion.prepareStatement(sql)) {
+            
+            consulta.setString(1, cedula);
+            java.sql.ResultSet resultado = consulta.executeQuery();
+            
+            if (resultado.next()) {
+                med = new Medico();
+                med.setIdMedico(resultado.getString("id_medico"));
+                med.setFullName(resultado.getString("full_name"));
+                med.setLicenciaMedica(resultado.getString("licencia_medica"));
+                med.setIdEspecialidad(resultado.getInt("id_especialidad"));
+                med.setTelefono(resultado.getString("telefono"));
+                med.setEmail(resultado.getString("email"));
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR al buscar médico: " + e.getMessage());
+        }
+        return med; // Retorna null si no lo encuentra
+    }
+    
 }
