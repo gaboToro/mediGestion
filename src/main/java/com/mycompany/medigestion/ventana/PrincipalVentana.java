@@ -150,7 +150,7 @@ public class PrincipalVentana extends javax.swing.JFrame {
         sb_acercade = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Ventana Principal - MediGestión");
+        setTitle("Menú Principal - MediGestión");
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -158,6 +158,7 @@ public class PrincipalVentana extends javax.swing.JFrame {
         btn_pacientes.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         btn_pacientes.setForeground(new java.awt.Color(0, 102, 153));
         btn_pacientes.setText("PACIENTES");
+        btn_pacientes.addActionListener(this::btn_pacientesActionPerformed);
         jPanel1.add(btn_pacientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 180, -1, -1));
 
         btn_citasmed.setBackground(new java.awt.Color(204, 204, 255));
@@ -287,6 +288,11 @@ public class PrincipalVentana extends javax.swing.JFrame {
         new MedicoVentana().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btn_medicosActionPerformed
+
+    private void btn_pacientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pacientesActionPerformed
+        new PacienteVentana().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btn_pacientesActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> new PrincipalVentana().setVisible(true));
