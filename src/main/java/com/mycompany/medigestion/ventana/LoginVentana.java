@@ -61,7 +61,7 @@ public class LoginVentana extends javax.swing.JFrame {
         l_fondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("MediGestion- Login");
+        setTitle("Login - MediGestión");
 
         panel.setToolTipText("");
         panel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());

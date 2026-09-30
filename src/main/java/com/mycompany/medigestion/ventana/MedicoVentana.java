@@ -121,7 +121,7 @@ public class MedicoVentana extends javax.swing.JFrame {
         l_fondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Usuarios - MediGestión");
+        setTitle("Médicos - MediGestión");
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
