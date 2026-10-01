@@ -1,10 +1,7 @@
 package com.mycompany.medigestion.ventana;
 
-import com.mycompany.medigestion.dao.MedicoDAO;
 import com.mycompany.medigestion.dao.PacienteDAO;
 import com.mycompany.medigestion.dao.SangreDAO;
-import com.mycompany.medigestion.modelo.Especialidad;
-import com.mycompany.medigestion.modelo.Medico;
 import com.mycompany.medigestion.modelo.Paciente;
 import com.mycompany.medigestion.modelo.Sangre;
 import com.mycompany.medigestion.util.UsuarioSesion;
@@ -23,18 +20,16 @@ import javax.swing.table.DefaultTableModel;
  */
 public class PacienteVentana extends javax.swing.JFrame {
     
-    private String cedulaMedicoSeleccionada = "";
     private String cedulaPacienteSeleccionada = "";
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PacienteVentana.class.getName());
  
     public PacienteVentana() {
-        /*if(!UsuarioSesion.isLogueado()){
+        if(!UsuarioSesion.isLogueado()){
             JOptionPane.showMessageDialog(null, "Acceso denegado. Por favor, inicie sesión", "Seguridad", JOptionPane.WARNING_MESSAGE);
             new LoginVentana().setVisible(true);
             this.dispose();
             return;
-        }*/
-        
+        }
         
         initComponents();
         cargarTabla();
