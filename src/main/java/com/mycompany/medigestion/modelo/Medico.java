@@ -42,7 +42,11 @@ public class Medico {
     public String getTelefono(){ return telefono; }
     public void setTelefono(String telefono){ this.telefono = telefono; }
     
-    public String getEmail(){ return email; }
-    public void setEmail(String email){ this.email = email; }
-    
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    @Override
+    public String toString() {
+        return this.fullName; // I-check no 'fullName' ti eksakto a nagan ti variable-mo para iti nagan ti doktor
+    }
 }
