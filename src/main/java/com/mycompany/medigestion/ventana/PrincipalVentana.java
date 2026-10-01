@@ -165,6 +165,7 @@ public class PrincipalVentana extends javax.swing.JFrame {
         btn_citasmed.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         btn_citasmed.setForeground(new java.awt.Color(0, 102, 153));
         btn_citasmed.setText("CITAS MÉDICAS");
+        btn_citasmed.addActionListener(this::btn_citasmedActionPerformed);
         jPanel1.add(btn_citasmed, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 180, -1, -1));
 
         btn_medicos.setBackground(new java.awt.Color(204, 204, 255));
@@ -293,6 +294,11 @@ public class PrincipalVentana extends javax.swing.JFrame {
         new PacienteVentana().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btn_pacientesActionPerformed
+
+    private void btn_citasmedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_citasmedActionPerformed
+        new CitaVentana().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btn_citasmedActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> new PrincipalVentana().setVisible(true));

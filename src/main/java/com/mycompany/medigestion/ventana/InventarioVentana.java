@@ -24,13 +24,13 @@ public class InventarioVentana extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(InventarioVentana.class.getName());
  
     public InventarioVentana() {
-/*        if(!UsuarioSesion.isLogueado()){
+        if(!UsuarioSesion.isLogueado()){
             JOptionPane.showMessageDialog(null, "Acceso denegado. Por favor, inicie sesión", "Seguridad", JOptionPane.WARNING_MESSAGE);
             new LoginVentana().setVisible(true);
             this.dispose();
             return;
         }
-        */
+        
         initComponents();
         cargarTabla();
         cargarCategoria();
