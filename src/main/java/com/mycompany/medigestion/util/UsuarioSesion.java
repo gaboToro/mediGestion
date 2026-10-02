@@ -1,10 +1,10 @@
 package com.mycompany.medigestion.util;
 
 /**
- *
  * @author gabri
  */
 public class UsuarioSesion {
+    private static int idUser;
     private static String username;
     private static String nombreCompleto;
     private static String rol;
@@ -13,7 +13,8 @@ public class UsuarioSesion {
     // Constructor privado para evitar que se instancie por error
     private UsuarioSesion() {}
 
-    public static void iniciarSesion(String user, String nombre, String rolUsuario) {
+    public static void iniciarSesion(int id, String user, String nombre, String rolUsuario) {
+        idUser = id;
         username = user;
         nombreCompleto = nombre;
         rol = rolUsuario;
@@ -21,9 +22,15 @@ public class UsuarioSesion {
     }
 
     public static void cerrarSesion() {
+        idUser=0;
+        username = null;
         nombreCompleto = null;
         rol = null;
         logueado = false;
+    }
+    
+    public static int getIdUser() {
+        return idUser;
     }
     
     public static String getUsername(){
