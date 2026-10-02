@@ -179,12 +179,14 @@ public class PrincipalVentana extends javax.swing.JFrame {
         btn_stock.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         btn_stock.setForeground(new java.awt.Color(0, 102, 153));
         btn_stock.setText("STOCK MEDICAMENTOS");
+        btn_stock.addActionListener(this::btn_stockActionPerformed);
         jPanel1.add(btn_stock, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 180, -1, -1));
 
         btn_facturacion.setBackground(new java.awt.Color(204, 204, 255));
         btn_facturacion.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         btn_facturacion.setForeground(new java.awt.Color(0, 102, 153));
         btn_facturacion.setText("FACTURACIÓN");
+        btn_facturacion.addActionListener(this::btn_facturacionActionPerformed);
         jPanel1.add(btn_facturacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 260, -1, -1));
 
         btn_usuario.setBackground(new java.awt.Color(204, 204, 255));
@@ -299,6 +301,16 @@ public class PrincipalVentana extends javax.swing.JFrame {
         new CitaVentana().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btn_citasmedActionPerformed
+
+    private void btn_stockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_stockActionPerformed
+        new InventarioVentana().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btn_stockActionPerformed
+
+    private void btn_facturacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_facturacionActionPerformed
+        new FacturaVentana().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btn_facturacionActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> new PrincipalVentana().setVisible(true));

@@ -120,7 +120,7 @@ public class LoginVentana extends javax.swing.JFrame {
         // 1. Validación de campos vacíos
         if (username.equals("") || pass.equals("")) {
             JOptionPane.showMessageDialog(null, "DEBE LLENAR TODOS LOS CAMPOS PARA CONTINUAR", "INFORMACIÓN", JOptionPane.WARNING_MESSAGE);
-            return; // Retornamos para detener la ejecución aquí mismo
+            return; 
         }
 
         try {
@@ -136,11 +136,15 @@ public class LoginVentana extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "USUARIO INACTIVO. Comuníquese con administración.", "ACCESO DENEGADO", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                
                 // Login Exitoso
+                int id_usuario = usrEncontrado.getId_User(); // EXTRAEMOS EL ID NUMÉRICO
                 String full_name = usrEncontrado.getFullname();
-                String rol = usrEncontrado.getRol().name(); // Convertimos el Enum a String
+                String rol = usrEncontrado.getRol().name(); 
 
-                UsuarioSesion.iniciarSesion(username, full_name, rol);
+                // ENVIAMOS EL ID COMO PRIMER PARÁMETRO
+                UsuarioSesion.iniciarSesion(id_usuario, username, full_name, rol);
+                
                 PrincipalVentana principal = new PrincipalVentana();
                 principal.setVisible(true);
                 this.dispose();
