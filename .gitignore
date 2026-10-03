@@ -3,3 +3,4 @@ target/
 lib/
 *.class
 nbproject/private/
+db.properties
