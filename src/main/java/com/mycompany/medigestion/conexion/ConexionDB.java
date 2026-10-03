@@ -1,8 +1,11 @@
 package com.mycompany.medigestion.conexion;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 import javax.swing.JOptionPane;
 
 /**
@@ -10,18 +13,26 @@ import javax.swing.JOptionPane;
  * @author gabri
  */
 public class ConexionDB {
-    private static String db = "medigestion_db";
-    private static String url = "jdbc:mysql://localhost:3306/"+db;
-    private static String user = "root";
-    private static String pass = "admin";
     
     public static Connection getConexion(){
         Connection conexion = null;
+        Properties props = new Properties();
         
         try{
+            // Extraer credenciales del archivo
+            FileInputStream fis = new FileInputStream("db.properties");
+            props.load(fis);
+            fis.close();
+            
+            String url = props.getProperty("db.url");
+            String user = props.getProperty("db.user");
+            String pass = props.getProperty("db.password");
+            
             Class.forName("com.mysql.cj.jdbc.Driver");
             conexion = DriverManager.getConnection(url,user, pass);
-        
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "ERROR: No se encontró o no se pudo leer el archivo db.properties", "ERROR", JOptionPane.ERROR_MESSAGE);
+            System.out.println("ERROR al leer propiedades: " + e.getMessage());
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(null, "ERROR en la conexión con la BASE DE DATOS", "ERROR" , JOptionPane.ERROR_MESSAGE);
             System.out.println("ERROR en la conexión: " + ex.getMessage());
